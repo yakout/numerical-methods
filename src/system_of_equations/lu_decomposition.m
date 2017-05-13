@@ -7,7 +7,6 @@ function solution = lu_decomposition(coeff_matrix, constants_matrix, num_of_unkn
     %solve for X
     solution=obtain_x_matrix(upper_matrix, y_matrix, num_of_unknowns);
     
-
 end
 
 
@@ -99,7 +98,3 @@ function system_matrix = create_system_matrix(coeff_matrix, constants_matrix)
     system_matrix=result;
     
 end
-
-
-
-
