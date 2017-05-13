@@ -1,14 +1,11 @@
 function root = fixed_point(xi, epsilon, max_iterations, fx)
-
     root = implementation(xi, epsilon, max_iterations, fx, 0);
-
-
 end
 
 
 function root2 = implementation(xi, epsilon, max_iterations, fx, iterations)
+    addpath('../');
 
-    disp(xi);
     xii = fx(xi)+xi;
     
     %01_STOP CONDITION*************************

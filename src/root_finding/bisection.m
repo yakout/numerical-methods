@@ -1,41 +1,51 @@
-
-% bisection method:
+%
+% BISECTION METHOD:
 %
 % Pors:
-%   1- Easy
-%   2- always converges
-%   3- the number of iterations required to attain an absolute error can be computer a priori.
+%   - Easy
+%   - always converges
+%   - the number of iterations required to attain an absolute error can be computer a priori.
 % 
 % Cons:
-%   1- Slower compared to other methods.
-%   2- Need to find inital guess Xl and Xu.
-%   3- No account is taken of the fact that if f(xl) is closer to zero, it's likely that root is 
+%   - Slower compared to other methods.
+%   - Need to find inital guess Xl and Xu.
+%   - No account is taken of the fact that if f(xl) is closer to zero, it's likely that root is 
 %      closer to Xl.
 %     
 % 
 % Drawbacks:
-%   1- If the function f(x) touches the x-axis it will be unable to find the initial
+%   - If the function f(x) touches the x-axis it will be unable to find the initial
 %      values, since there is no upper and lower points that have different sings.
-%   2- Function changes sign but roots does not exist e.g f(x) = 1/x.
+%   - Function changes sign but roots does not exist e.g f(x) = 1/x.
 % 
-
-%
-% default value of epsilon = 0.00001
-% default value of max_iterations = 50
-%
 function root = bisection(xl, xu, epsilon, max_iterations, fx, output_file)
-    addpath('../'); % to use displaytable function
+% Find root between xl and xu using false position.
+% 
+% Input
+% 
+% xl: lower initial point.
+% xu: upper initial point.
+% epsilon: stopping condition for the algorithm.
+% max_iterations: another stopping condition for the algorithms.
+% fx: the function that this method will find a root for.
+% output_file: (string) path for the output file that will contains the method results.
+% 
+% 
+% Output
+% 
+% the found root.
+% 
+    addpath('../');
     tic
+
     if(fx(xl)*fx(xu)>0)
         return;
     end
 
     [root, iterations, data] = implementation(xl, xu, xu, epsilon, max_iterations, fx, 0, []);
-    disp(iterations);
-    disp(data);
-
+    
     fileID = fopen(output_file,'w');
-    colheadings = {'Xr', 'Precision'};
+    colheadings = {'Approximate root', 'Precision'};
     rowheadings = {};
     for i=1:iterations,
         rowheadings{end+1} = int2str(i);
@@ -56,10 +66,10 @@ function [root, iterations, data] = implementation(xl, xu, xr_old, epsilon, max_
     xr = (xl + xu) / 2;
     
     %01_STOP CONDITION*************************
-    approximate_relative_error = abs((xr - xr_old) / xr);
+    error = abs((xr - xr_old) / xr);
     iterations = iterations + 1;
-    data = [data; xr, approximate_relative_error];
-    if(approximate_relative_error <= epsilon || iterations >= max_iterations)
+    data = [data; xr, error];
+    if(error <= epsilon || iterations >= max_iterations)
         root = xr;
         return;
     end
