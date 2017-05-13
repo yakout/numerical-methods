@@ -11,7 +11,13 @@
 %   2- Need to find inital guess Xl and Xu.
 %   3- No account is taken of the fact that if f(xl) is closer to zero, it's likely that root is 
 %      closer to Xl.
-
+%     
+% 
+% Drawbacks:
+%   1- If the function f(x) touches the x-axis it will be unable to find the initial
+%      values, since there is no upper and lower points that have different sings.
+%   2- Function changes sign but roots does not exist e.g f(x) = 1/x.
+% 
 
 %
 % default value of epsilon = 0.00001
