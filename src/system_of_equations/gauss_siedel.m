@@ -1,15 +1,14 @@
 function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_matrix, initial_guess, max_iterations, epsilon, output_file)
     addpath('../')
+    
     tic 
-
     system_matrix = create_system_matrix(coeff_matrix, constants_matrix);
     num_of_unknowns = length(constants_matrix);
-
     [solution, iterations, data] = implementation(system_matrix, initial_guess, num_of_unknowns, max_iterations, epsilon, 0, []);
+    timeElapsed = toc;
 
 
     % display results in table in output file
-    timeElapsed = toc;
     fileID = fopen(output_file,'w');
     colheadings = {'x', 'y', 'z', 'Err_x', 'Err_y', 'Err_z'};
     rowheadings = {};
@@ -66,7 +65,7 @@ function [solution, iterations, data] = implementation(system_matrix, previous_s
     % data = cat(2, data, approximations, errors);
     % tmp= cat(2, approximations, errors);
     % data = cat(1, data, tmp);
-    data = [data; approximations, errors]
+    data = [data; approximations, errors];
     
     %disp(current_solutions);
     

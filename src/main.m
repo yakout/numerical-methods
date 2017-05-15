@@ -14,22 +14,28 @@ fx_coeff = [2, 1, 4 ; 1, 2, 3 ; 4, -1, 2];
 constants = [1, 1.5, 2];
 
 % y = birge_vieta(fx_coeff, -3, epsilon, max_iterations)
-gauss_siedel(fx_coeff, constants, [0, 0, 0], max_iterations, epsilon, 'output4.txt');
+% gauss_siedel(fx_coeff, constants, [0, 0, 0], max_iterations, epsilon, 'output4.txt');
 
 %y = naive_gauss(system_matrix, 3);
 
-%disp(y);
+%disp(y); 
 
 %% f: function x
 function [outputs] = f(x)
 	% outputs = x^4  + 3*x -4;
-	outputs = exp(-x);
+	outputs = exp(-x) - x;
+	% outputs = x^3 - 0.165*x^2 + 3.993*10^-4;
 end
 
-% FixedPoint(0, epsilon, max_iterations, @f, 'output3.txt')
-% fixed_point(0, epsilon, max_iterations, @f, 'output3.txt')
-% false_position(0, 3, 0.00001, 100, @f, 'output2.txt');
-% bisection(0, 3, 0.00001, 100, @f, 'output1.txt');
+
+% **** N O T E ****
+pkg load symbolic; % this line is only neccessary for octave users like me :P (yakout)
+
+% secant(0, 1.0, epsilon, max_iterations, @f);
+% fixed_point(0, epsilon, max_iterations, @f);
+% false_position(0, 3, 0.00001, 100, @f);
+% bisection(0, 3, 0.00001, 100, @f);
+newton_raphson(0, epsilon, max_iterations, @f);
 
 % syms x;
 % f1 = '2x^2-sin(x)';
