@@ -47,10 +47,6 @@ function [root, iterations, data] = FixedPoint(x0, tol, nmax, g, output_file)
     ex(1) = 0;
     data = [xa(1:n)' ex(1:n)'];
 
-    min = 1;
-    for i=1:n,
-
-
 	
 	% if ~success
 	%    xa = [];

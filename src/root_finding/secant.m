@@ -1,8 +1,13 @@
-function root = secant(xi, xii, epsilon, max_iterations, fx, output_file)
+function [root, iterations, data] = secant(xi, xii, epsilon, max_iterations, fx)
+    addpath('../');
+    
+    tic
+    [root, iterations, data] = implementation(xi, xii, epsilon, max_iterations, fx, 0, []);
+    timeElapsed = toc;
 
-    root = implementation(xi, xii, epsilon, max_iterations, fx, 0);
 
-
+    % output the results in file in table format.
+    output_file = strcat('./outputs/secant_', datestr(clock),'.txt');
     fileID = fopen(output_file,'w');
     colheadings = {'Approximate root', 'Precision'};
     rowheadings = {};
@@ -14,28 +19,25 @@ function root = secant(xi, xii, epsilon, max_iterations, fx, output_file)
     wid = 16;
     displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
 
-    timeElapsed = toc;
     fprintf(fileID, '\nnumber of iterations: %d\n', iterations);
     fprintf(fileID, 'execution time: %f\n', timeElapsed);
     fclose(fileID);
-
 end
 
 
-function root2 = implementation(xi, xii, epsilon, max_iterations, fx, iterations)
+function [root, iterations, data] = implementation(xi, xii, epsilon, max_iterations, fx, iterations, data)
 
     xiii = xii - (fx(xii)*(xi-xii))/(fx(xi)-fx(xii));
     
     %01_STOP CONDITION*************************
     error=abs((xiii-xii)/xiii);
     iterations = iterations+1;
+    data = [data; xiii error];
     if(error<=epsilon||iterations>max_iterations)
-        root2 = xiii;
+        root = xiii;
         return;
     end
     
     %01_RECURSIVE STEP*************************
-    root2 = implementation(xii, xiii, epsilon, max_iterations, fx, iterations);
-    
-
+    [root, iterations, data] = implementation(xii, xiii, epsilon, max_iterations, fx, iterations, data);
 end

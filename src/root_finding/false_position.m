@@ -17,7 +17,7 @@
 %   - One sided nature of false position when there one bound that is stuck.
 %     when this occurs we can use the formula xr = (xl + xu)/2.
 % 
-function root = false_position(xl,xu,epsilon, max_iterations, fx, output_file)
+function root = false_position(xl,xu,epsilon, max_iterations, fx)
 % Find root between xl and xu using false position.
 % 
 % Input
@@ -42,7 +42,12 @@ function root = false_position(xl,xu,epsilon, max_iterations, fx, output_file)
     end
     
     [root, iterations, data] = implementation(xl, xu, xu, epsilon, max_iterations, fx, 0, []);
+    timeElapsed = toc;
+    
+    
+    % output the results in file in table format.
 
+    output_file = strcat('./outputs/false_position_', datestr(clock),'.txt');
     fileID = fopen(output_file,'w');
     colheadings = {'Approximate root', 'Precision'};
     rowheadings = {};
@@ -54,7 +59,6 @@ function root = false_position(xl,xu,epsilon, max_iterations, fx, output_file)
     wid = 16;
     displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
 
-    timeElapsed = toc;
     fprintf(fileID, '\nnumber of iterations: %d\n', iterations);
     fprintf(fileID, 'execution time: %f\n', timeElapsed);
     fclose(fileID);

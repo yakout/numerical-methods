@@ -1,4 +1,4 @@
-function roots = birge_vieta(fx, x0, epsilon, max_iterations )
+function roots = birge_vieta(fx, x0, epsilon, max_iterations)
 
     g=sym(fx);
     fx_coeff = sym2poly(g); 
@@ -16,7 +16,6 @@ function roots = birge_vieta(fx, x0, epsilon, max_iterations )
     end
     
     roots = result;
-
 
 end
 

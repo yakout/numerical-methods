@@ -18,7 +18,7 @@
 %      values, since there is no upper and lower points that have different sings.
 %   - Function changes sign but roots does not exist e.g f(x) = 1/x.
 % 
-function [root, iterations, data] = bisection(xl, xu, epsilon, max_iterations, fx, output_file)
+function [root, iterations, data] = bisection(xl, xu, epsilon, max_iterations, fx)
 % Find root between xl and xu using false position.
 % 
 % Input
@@ -43,7 +43,10 @@ function [root, iterations, data] = bisection(xl, xu, epsilon, max_iterations, f
     end
 
     [root, iterations, data] = implementation(xl, xu, xu, epsilon, max_iterations, fx, 0, []);
+    timeElapsed = toc;
     
+    % output the results in file in table format.
+    output_file = strcat('./outputs/bisection_', datestr(clock),'.txt');
     fileID = fopen(output_file,'w');
     colheadings = {'Approximate root', 'Precision'};
     rowheadings = {};
@@ -55,7 +58,6 @@ function [root, iterations, data] = bisection(xl, xu, epsilon, max_iterations, f
     wid = 16;
     displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
 
-    timeElapsed = toc
     fprintf(fileID, '\nnumber of iterations: %d\n', iterations);
     fprintf(fileID, 'execution time: %f\n', timeElapsed);
     fclose(fileID);

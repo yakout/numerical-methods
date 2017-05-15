@@ -1,18 +1,13 @@
-%  DEPRECATED
-% 
-% 
-function root = fixed_point(xi, epsilon, max_iterations, fx, output_file)
-%
-% 
-% 
-% 
-
+function [root, iterations, data] = fixed_point(xi, epsilon, max_iterations, fx)
     addpath('../');
+
     tic
-
-    [root, interations, data] = implementation(xi, epsilon, max_iterations, fx, 0, []);
-
-
+    [root, iterations, data] = implementation(xi, epsilon, max_iterations, fx, 0, []);
+    timeElapsed = toc;
+    
+    
+    % output the results in file in table format.
+    output_file = strcat('./outputs/fixed_point_', datestr(clock),'.txt');
     fileID = fopen(output_file,'w');
     colheadings = {'Approximate root', 'Precision'};
     rowheadings = {};
@@ -24,30 +19,25 @@ function root = fixed_point(xi, epsilon, max_iterations, fx, output_file)
     wid = 16;
     displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
 
-    timeElapsed = toc;
     fprintf(fileID, '\nnumber of iterations: %d\n', iterations);
     fprintf(fileID, 'execution time: %f\n', timeElapsed);
     fclose(fileID);
-
 end
 
 
-function [root, interations, data] = implementation(xi, epsilon, max_iterations, fx, iterations, data)
-    addpath('../');
-
+function [root, iterations, data] = implementation(xi, epsilon, max_iterations, fx, iterations, data)
     xii = fx(xi);
     
     %01_STOP CONDITION*************************
-    error=abs((xii-xi)/xii);
-    iterations = iterations+1;
+    error = abs( (xii - xi) / xii);
+    iterations = iterations + 1;
     data = [data; xii error];
-    if(error<=epsilon||iterations>max_iterations)
+    if(error<=epsilon||iterations>=max_iterations)
         root = xii;
         return;
     end
     
     %01_RECURSIVE STEP*************************
-    [root, interations, data] = implementation(xii, epsilon, max_iterations, fx, iterations, data);
-
+    [root, iterations, data] = implementation(xii, epsilon, max_iterations, fx, iterations, data);
 end
 
