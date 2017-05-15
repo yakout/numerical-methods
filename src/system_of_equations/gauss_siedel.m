@@ -3,7 +3,7 @@ function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_mat
     
     tic 
     system_matrix = create_system_matrix(coeff_matrix, constants_matrix);
-    num_of_unknowns = length(constants_matrix)
+    num_of_unknowns = length(constants_matrix);
     [solution, iterations, data] = implementation(system_matrix, initial_guess, num_of_unknowns, max_iterations, epsilon, 0, []);
     timeElapsed = toc;
 
@@ -30,7 +30,11 @@ function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_mat
         rowheadings{end+1} = int2str(i);
     end
 
-    fms = {'.4f','.4f', '.4f','.4f','.4f', '.4f'};
+    % fill the formats
+    fms = {};
+    for i=1:num_of_unknowns*2
+        fms{end+1} = '.4f';
+    end
     wid = 16;
     displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
 

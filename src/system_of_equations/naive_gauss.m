@@ -1,13 +1,45 @@
 function solutions = naive_gauss(coeff_matrix, constants_matrix, num_of_unknowns)
 
+    tic
     system_matrix = create_system_matrix(coeff_matrix, constants_matrix, num_of_unknowns);
-    %num_of_unknowns = length(constants_matrix);
-    
+    num_of_unknowns = length(constants_matrix)
     
     solutions=forward_elimination(system_matrix, num_of_unknowns);
     solutions=back_substitution(solutions, num_of_unknowns);
     solutions=fliplr(solutions);
+    timeElapsed = toc;
+
+
+    % % output the results in file in table format.
+    % output_file = strcat('./outputs/naive_gauss_', datestr(clock),'.txt');
+    % fileID = fopen(output_file, 'w');
+
+
+    % % fill the colheadings
+    % colheadings = {};
+    % % fill the x's x1, x2, x3 ..
+    % for i=1:num_of_unknowns,
+    %     colheadings{end+1} = strcat('x',int2str(i));
+    % end
+    % % fill the errors Err_x1 ..
+    % for i=1:num_of_unknowns,
+    %     colheadings{end+1} = strcat('Err_x',int2str(i));
+    % end
     
+    % % fill the rowheadings
+    % rowheadings = {};
+    % for i=1:iterations,
+    %     rowheadings{end+1} = int2str(i);
+    % end
+
+    % fms = {};
+    % wid = 16;
+    % displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
+
+    % timeElapsed = toc;
+    % fprintf(fileID, '\nnumber of iterations: %d\n', iterations);
+    % fprintf(fileID, 'execution time: %f\n', timeElapsed);
+    % fclose(fileID);
 end
 
 function new_system = forward_elimination(system_matrix, num_of_unknowns)
