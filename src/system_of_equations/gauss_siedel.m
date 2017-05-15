@@ -1,18 +1,41 @@
-function solution = gauss_siedel(coeff_matrix, constants_matrix, initial_guess, max_iterations, epsilon)
+function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_matrix, initial_guess, max_iterations, epsilon, output_file)
+    addpath('../')
+    tic 
 
     system_matrix = create_system_matrix(coeff_matrix, constants_matrix);
     num_of_unknowns = length(constants_matrix);
 
-    solution = implementation(system_matrix, initial_guess, num_of_unknowns, max_iterations, 0, epsilon);
+    [solution, iterations, data] = implementation(system_matrix, initial_guess, num_of_unknowns, max_iterations, epsilon, 0, []);
+
+
+    % display results in table in output file
+    timeElapsed = toc;
+    fileID = fopen(output_file,'w');
+    colheadings = {'x', 'y', 'z', 'Err_x', 'Err_y', 'Err_z'};
+    rowheadings = {};
+    for i=1:iterations,
+        rowheadings{end+1} = int2str(i);
+    end
+
+    fms = {'.4f','.4f', '.4f','.4f','.4f', '.4f'};
+    wid = 16;
+    displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
+
+    timeElapsed = toc;
+    fprintf(fileID, '\nnumber of iterations: %d\n', iterations);
+    fprintf(fileID, 'execution time: %f\n', timeElapsed);
+    fclose(fileID);
 
 end
 
 
 
-function solution = implementation(system_matrix, previous_solutions, num_of_unknowns, max_iterations, iterations, epsilon)
+function [solution, iterations, data] = implementation(system_matrix, previous_solutions, num_of_unknowns, max_iterations, epsilon, iterations, data)
         
     current_solutions=previous_solutions;
 
+    approximations = []
+    errors = [0, 0, 0];
     for row=1:num_of_unknowns
         
         a=system_matrix(row, row);
@@ -35,8 +58,15 @@ function solution = implementation(system_matrix, previous_solutions, num_of_unk
         answer = (1/a)*(d-(summation));
         %disp(answer);
         current_solutions(row)=answer;
-        
+
+        approximations = [approximations current_solutions(row)];
+        errors(row)=abs( ( current_solutions(row)-previous_solutions(row) )/ current_solutions(row) );
     end
+
+    % data = cat(2, data, approximations, errors);
+    % tmp= cat(2, approximations, errors);
+    % data = cat(1, data, tmp);
+    data = [data; approximations, errors]
     
     %disp(current_solutions);
     
@@ -47,7 +77,7 @@ function solution = implementation(system_matrix, previous_solutions, num_of_unk
         return;
     end
     
-    solution=implementation(system_matrix, current_solutions, num_of_unknowns, max_iterations, iterations, epsilon);
+    [solution, iterations, data] =implementation(system_matrix, current_solutions, num_of_unknowns, max_iterations, epsilon, iterations, data);
 
 
 end

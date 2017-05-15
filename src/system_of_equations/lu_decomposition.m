@@ -6,6 +6,7 @@ function solution = lu_decomposition(coeff_matrix, constants_matrix, num_of_unkn
     y_matrix=obtain_y_matrix(lower_matrix, constants_matrix, num_of_unknowns);
     %solve for X
     solution=obtain_x_matrix(upper_matrix, y_matrix, num_of_unknowns);
+    solution=fliplr(solution);
     
 end
 

@@ -1,5 +1,7 @@
-function roots = birge_vieta(fx_coeff, x0, epsilon, max_iterations )
-   
+function roots = birge_vieta(fx, x0, epsilon, max_iterations )
+
+    g=sym(fx);
+    fx_coeff = sym2poly(g); 
     %result= zeros(length(fx_coeff)-1, 'int8');
     result=[0,1];
     current_eqn=fx_coeff;

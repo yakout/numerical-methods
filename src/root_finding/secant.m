@@ -1,8 +1,23 @@
-function root = secant(x0, epsilon, max_iterations, fx)
+function root = secant(xi, xii, epsilon, max_iterations, fx, output_file)
 
-    a = x0;
-    b = x0+0.0001;
-    root = implementation(a, b, epsilon, max_iterations, fx, 0);
+    root = implementation(xi, xii, epsilon, max_iterations, fx, 0);
+
+
+    fileID = fopen(output_file,'w');
+    colheadings = {'Approximate root', 'Precision'};
+    rowheadings = {};
+    for i=1:iterations,
+        rowheadings{end+1} = int2str(i);
+    end
+
+    fms = {'.4f','.5E'};
+    wid = 16;
+    displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
+
+    timeElapsed = toc;
+    fprintf(fileID, '\nnumber of iterations: %d\n', iterations);
+    fprintf(fileID, 'execution time: %f\n', timeElapsed);
+    fclose(fileID);
 
 end
 

@@ -1,7 +1,7 @@
-function solutions = gauss_jordan(coeff_matrix, constants_matrix)
+function solutions = gauss_jordan(coeff_matrix, constants_matrix, num_of_unknowns)
 
     system_matrix = create_system_matrix(coeff_matrix, constants_matrix);
-    num_of_unknowns = length(constants_matrix);
+    %num_of_unknowns = length(constants_matrix);
 
 
     solutions=forward_elimination(system_matrix, num_of_unknowns);
