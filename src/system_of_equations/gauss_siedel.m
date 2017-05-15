@@ -1,16 +1,30 @@
-function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_matrix, initial_guess, max_iterations, epsilon, output_file)
+function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_matrix, initial_guess, max_iterations, epsilon)
     addpath('../')
     
     tic 
     system_matrix = create_system_matrix(coeff_matrix, constants_matrix);
-    num_of_unknowns = length(constants_matrix);
+    num_of_unknowns = length(constants_matrix)
     [solution, iterations, data] = implementation(system_matrix, initial_guess, num_of_unknowns, max_iterations, epsilon, 0, []);
     timeElapsed = toc;
 
 
-    % display results in table in output file
-    fileID = fopen(output_file,'w');
-    colheadings = {'x', 'y', 'z', 'Err_x', 'Err_y', 'Err_z'};
+    % output the results in file in table format.
+    output_file = strcat('./outputs/gauss_siedel_', datestr(clock),'.txt');
+    fileID = fopen(output_file, 'w');
+
+
+    % fill the colheadings
+    colheadings = {};
+    % fill the x's x1, x2, x3 ..
+    for i=1:num_of_unknowns,
+        colheadings{end+1} = strcat('x',int2str(i));
+    end
+    % fill the errors Err_x1 ..
+    for i=1:num_of_unknowns,
+        colheadings{end+1} = strcat('Err_x',int2str(i));
+    end
+    
+    % fill the rowheadings
     rowheadings = {};
     for i=1:iterations,
         rowheadings{end+1} = int2str(i);
@@ -33,7 +47,7 @@ function [solution, iterations, data] = implementation(system_matrix, previous_s
         
     current_solutions=previous_solutions;
 
-    approximations = []
+    approximations = [];
     errors = [0, 0, 0];
     for row=1:num_of_unknowns
         

@@ -14,7 +14,7 @@ fx_coeff = [2, 1, 4 ; 1, 2, 3 ; 4, -1, 2];
 constants = [1, 1.5, 2];
 
 % y = birge_vieta(fx_coeff, -3, epsilon, max_iterations)
-% gauss_siedel(fx_coeff, constants, [0, 0, 0], max_iterations, epsilon, 'output4.txt');
+gauss_siedel(fx_coeff, constants, [0, 0, 0], max_iterations, epsilon);
 
 %y = naive_gauss(system_matrix, 3);
 
@@ -35,7 +35,7 @@ pkg load symbolic; % this line is only neccessary for octave users like me :P (y
 % fixed_point(0, epsilon, max_iterations, @f);
 % false_position(0, 3, 0.00001, 100, @f);
 % bisection(0, 3, 0.00001, 100, @f);
-newton_raphson(0, epsilon, max_iterations, @f);
+% newton_raphson(0, epsilon, max_iterations, @f);
 
 % syms x;
 % f1 = '2x^2-sin(x)';
