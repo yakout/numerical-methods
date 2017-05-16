@@ -1,6 +1,6 @@
-function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_matrix, initial_guess, max_iterations, epsilon)
-    addpath('../')
-    
+function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_matrix, initial_guess, max_iterations, epsilon)    
+    addpath('./utilities')
+
     tic 
     system_matrix = create_system_matrix(coeff_matrix, constants_matrix);
     num_of_unknowns = length(constants_matrix);
@@ -9,7 +9,7 @@ function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_mat
 
 
     % output the results in file in table format.
-    output_file = strcat('./outputs/gauss_siedel_', datestr(clock),'.txt');
+    output_file = strcat('./logic/outputs/gauss_siedel_', datestr(clock),'.txt');
     fileID = fopen(output_file, 'w');
 
 
@@ -55,6 +55,8 @@ function [solution, iterations, data] = implementation(system_matrix, previous_s
     errors = [0, 0, 0];
     for row=1:num_of_unknowns
         
+        % disp(system_matrix);
+        
         a=system_matrix(row, row);
         d=system_matrix(row, num_of_unknowns+1);
         %disp(d);
@@ -62,12 +64,14 @@ function [solution, iterations, data] = implementation(system_matrix, previous_s
         summation=0;
         index=1;
         for col=1:num_of_unknowns
+            %disp(index);
             if(row==col)
                 index = index+1;
                 continue;
             end
             %disp(col);
-            %disp(system_matrix(row, col));
+            % disp(system_matrix(row, col));
+            
             summation = summation + system_matrix(row, col)*previous_solutions(index);
             index = index+1;
         end
@@ -134,9 +138,3 @@ function system_matrix = create_system_matrix(coeff_matrix, constants_matrix)
     system_matrix=result;
     
 end
-
-
-
-
-
-

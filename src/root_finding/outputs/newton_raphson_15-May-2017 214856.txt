@@ -1,0 +1,8 @@
+ |Approximate root|       Precision|
+1|          0.5000|     1.00000E+00|
+2|          0.5663|     1.17093E-01|
+3|          0.5671|     1.46729E-03|
+4|          0.5671|     2.21064E-07|
+
+number of iterations: 4
+execution time: 10.772318

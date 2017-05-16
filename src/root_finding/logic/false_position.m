@@ -1,24 +1,23 @@
-%
-% BISECTION METHOD:
-%
-% Pors:
-%   - Easy
-%   - always converges
-%   - the number of iterations required to attain an absolute error can be computer a priori.
+% 
+% FALSE POSITION:
+% 
+% 
+% FALSE POSITION:
+% 
+% Pros:
+%   - Faster convergence than bisection.
+%   - Always converges for a single root.
 % 
 % Cons:
-%   - Slower compared to other methods.
-%   - Need to find inital guess Xl and Xu.
-%   - No account is taken of the fact that if f(xl) is closer to zero, it's likely that root is 
-%      closer to Xl.
-%     
+%   - May be slower than bisection method for some cases.
+%   - There are times this method may converge very very slow.
+%     f(x) = x^4 + 3x - 4
 % 
-% Drawbacks:
-%   - If the function f(x) touches the x-axis it will be unable to find the initial
-%      values, since there is no upper and lower points that have different sings.
-%   - Function changes sign but roots does not exist e.g f(x) = 1/x.
+% Pitfalls of this methos:
+%   - One sided nature of false position when there one bound that is stuck.
+%     when this occurs we can use the formula xr = (xl + xu)/2.
 % 
-function [root, iterations, data] = bisection(xl, xu, epsilon, max_iterations, fx)
+function [root, iterations, data] = false_position(xl,xu,epsilon, max_iterations, fx)
 % Find root between xl and xu using false position.
 % 
 % Input
@@ -35,18 +34,20 @@ function [root, iterations, data] = bisection(xl, xu, epsilon, max_iterations, f
 % 
 % the found root.
 % 
-    addpath('../');
+    addpath('../../utilities');
     tic
 
     if(fx(xl)*fx(xu)>0)
         return;
     end
-
+    
     [root, iterations, data] = implementation(xl, xu, xu, epsilon, max_iterations, fx, 0, []);
     timeElapsed = toc;
     
+    
     % output the results in file in table format.
-    output_file = strcat('./outputs/bisection_', datestr(clock),'.txt');
+
+    output_file = strcat('./outputs/false_position_', datestr(clock),'.txt');
     fileID = fopen(output_file,'w');
     colheadings = {'Approximate root', 'Precision'};
     rowheadings = {};
@@ -65,24 +66,26 @@ end
 
 
 function [root, iterations, data] = implementation(xl, xu, xr_old, epsilon, max_iterations, fx, iterations, data)
-    xr = (xl + xu) / 2;
+
+    xr = (xl*fx(xu)-xu*fx(xl))/(fx(xu)-fx(xl));
     
     %01_STOP CONDITION*************************
-    error = abs((xr - xr_old) / xr);
-    iterations = iterations + 1;
+    error=abs((xr-xr_old)/xr);
+    iterations = iterations+1;
     data = [data; xr, error];
-    if(error <= epsilon || iterations >= max_iterations)
+    if(error<=epsilon||iterations>max_iterations)
         root = xr;
         return;
     end
     
     %01_RECURSIVE STEP*************************
-    if(fx(xr) * fx(xl) < 0)
+    if(fx(xr)*fx(xl)<0)
         [root, iterations, data] = implementation(xl, xr, xr, epsilon, max_iterations, fx, iterations, data);
         return;
     else
         [root, iterations, data] = implementation(xr, xu, xr, epsilon, max_iterations, fx, iterations, data);
         return;
     end
+    
 
 end

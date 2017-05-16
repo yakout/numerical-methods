@@ -1,4 +1,5 @@
-function roots = birge_vieta(fx, x0, epsilon, max_iterations)
+function [roots, iterations, data] = birge_vieta(fx, x0, epsilon, max_iterations)
+    % data [approx error]
 
     g=sym(fx);
     fx_coeff = sym2poly(g); 
@@ -21,7 +22,7 @@ end
 
 
 
-function [root,new_coeffs] = newton_horner(fx_coeff, x0, epsilon, max_iterations)
+function [root, new_coeffs] = newton_horner(fx_coeff, x0, epsilon, max_iterations)
 
     %initialize horner table
     xi=x0;

@@ -1,8 +1,8 @@
 function solutions = naive_gauss(coeff_matrix, constants_matrix, num_of_unknowns)
 
     tic
-    system_matrix = create_system_matrix(coeff_matrix, constants_matrix, num_of_unknowns);
-    num_of_unknowns = length(constants_matrix)
+    system_matrix = create_system_matrix(coeff_matrix, constants_matrix);
+    %num_of_unknowns = length(constants_matrix);
     
     solutions=forward_elimination(system_matrix, num_of_unknowns);
     solutions=back_substitution(solutions, num_of_unknowns);
