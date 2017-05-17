@@ -36,9 +36,8 @@ function [root, iterations, data] = bisection(xl, xu, epsilon, max_iterations, f
 % the found root.
 % 
 
-    disp('test0000000000000000000000');
 
-    addpath('../../utilities');
+    addpath('./utilities');
     tic
 
     if(fx(xl)*fx(xu)>0)
@@ -48,24 +47,29 @@ function [root, iterations, data] = bisection(xl, xu, epsilon, max_iterations, f
     [root, iterations, data] = implementation(xl, xu, xu, epsilon, max_iterations, fx, 0, []);
     
     disp(root);
-    % timeElapsed = toc;
+    timeElapsed = toc;
     
-    % output the results in file in table format.
-    %output_file = strcat('./outputs/bisection_', datestr(clock),'.txt');
-    %fileID = fopen(output_file,'w');
-    %colheadings = {'Approximate root', 'Precision'};
-    %rowheadings = {};
-    %for i=1:iterations,
-    %    rowheadings{end+1} = int2str(i);
-    %end
+    %output the results in file in table format.t
+    date_ = strrep(datestr(clock),':','_');
+    output_file = strcat('./root_finding/outputs/bisection_', date_,'.txt');
+    %output_file = './root_finding/outputs/bisection.txt';
+    
+    %disp(output_file);
+    %pwd
+    fileID = fopen(output_file,'w');
+    colheadings = {'xu', 'xl', 'Approximate root', 'Precision'};
+    rowheadings = {};
+    for i=1:iterations,
+        rowheadings{end+1} = int2str(i);
+    end
 
-    %fms = {'.4f','.5E'};
-    %wid = 16;
-    %displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
+    fms = {'.4f','.4f', '.4f', '.4f'};
+    wid = 16;
+    displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
 
-    %fprintf(fileID, '\nnumber of iterations: %d\n', iterations);
-    %fprintf(fileID, 'execution time: %f\n', timeElapsed);
-    %fclose(fileID);
+    fprintf(fileID, '\nnumber of iterations: %d\n', iterations);
+    fprintf(fileID, 'execution time: %f\n', timeElapsed);
+    fclose(fileID);
 end
 
 
@@ -75,8 +79,7 @@ function [root, iterations, data] = implementation(xl, xu, xr_old, epsilon, max_
     %01_STOP CONDITION*************************
     error = abs((xr - xr_old) / xr);
     iterations = iterations + 1;
-    %data = [data; xl, xu, xr, error];
-    data = [];
+    data = [data; xl, xu, xr, error];
     if(error <= epsilon || iterations >= max_iterations)
         root = xr;
         return;

@@ -1,13 +1,19 @@
 function [root, iterations, data] = secant(xi, xii, epsilon, max_iterations, fx)
-    addpath('../');
+    addpath('./utilities');
     
     tic
     [root, iterations, data] = implementation(xi, xii, epsilon, max_iterations, fx, 0, []);
     timeElapsed = toc;
+    
+    disp('root : ');
+    disp(root);
+    
 
 
     % output the results in file in table format.
-    output_file = strcat('./outputs/secant_', datestr(clock),'.txt');
+    date_ = strrep(datestr(clock),':','_');
+    output_file = strcat('./root_finding/outputs/secant_', date_,'.txt');
+    
     fileID = fopen(output_file,'w');
     colheadings = {'Approximate root', 'Precision'};
     rowheadings = {};

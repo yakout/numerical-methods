@@ -34,7 +34,7 @@ function [root, iterations, data] = false_position(xl,xu,epsilon, max_iterations
 % 
 % the found root.
 % 
-    addpath('../../utilities');
+    addpath('./utilities');
     tic
 
     if(fx(xl)*fx(xu)>0)
@@ -44,18 +44,24 @@ function [root, iterations, data] = false_position(xl,xu,epsilon, max_iterations
     [root, iterations, data] = implementation(xl, xu, xu, epsilon, max_iterations, fx, 0, []);
     timeElapsed = toc;
     
+    disp('             ');
+    disp('root = ')
+    disp(root);
+    
     
     % output the results in file in table format.
 
-    output_file = strcat('./outputs/false_position_', datestr(clock),'.txt');
+    date_ = strrep(datestr(clock),':','_');
+    output_file = strcat('./root_finding/outputs/false_position_', date_,'.txt');
+    
     fileID = fopen(output_file,'w');
-    colheadings = {'Approximate root', 'Precision'};
+    colheadings = {'xu', 'xl', 'Approximate root', 'Precision'};
     rowheadings = {};
     for i=1:iterations,
         rowheadings{end+1} = int2str(i);
     end
 
-    fms = {'.4f','.5E'};
+    fms = {'.4f','.4f','.4f','.4f'};
     wid = 16;
     displaytable(data, colheadings, wid, fms, rowheadings, fileID, '|', '|');
 
@@ -72,7 +78,7 @@ function [root, iterations, data] = implementation(xl, xu, xr_old, epsilon, max_
     %01_STOP CONDITION*************************
     error=abs((xr-xr_old)/xr);
     iterations = iterations+1;
-    data = [data; xr, error];
+    data = [data; xu, xl, xr, error];
     if(error<=epsilon||iterations>max_iterations)
         root = xr;
         return;

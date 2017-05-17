@@ -1,21 +1,37 @@
-function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_matrix, initial_guess, max_iterations, epsilon)    
-    addpath('./utilities')
-
+function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_matrix, initial_guess, max_iterations, epsilon)
+    addpath('./utilities');
+    
+    %disp(coeff_matrix);
+    %disp(constants_matrix);
+    
+    
     tic 
     system_matrix = create_system_matrix(coeff_matrix, constants_matrix);
+    
+    disp(system_matrix);
+    
     num_of_unknowns = length(constants_matrix);
     [solution, iterations, data] = implementation(system_matrix, initial_guess, num_of_unknowns, max_iterations, epsilon, 0, []);
-    timeElapsed = toc;
+    %timeElapsed = toc;
+    %disp(data);
+    disp('ITERATIONS');
+    disp(iterations);
 
 
+    
+    
     % output the results in file in table format.
-    output_file = strcat('./logic/outputs/gauss_siedel_', datestr(clock),'.txt');
+    %output_file = strcat('./outputs/gauss_siedel_', datestr(clock),'.txt');
+    date_ = strrep(datestr(clock),':','_');
+    output_file = strcat('./linear_systems/outputs/gauss_siedel_', date_,'.txt');
+    
+    
     fileID = fopen(output_file, 'w');
 
 
-    % fill the colheadings
+    %fill the colheadings
     colheadings = {};
-    % fill the x's x1, x2, x3 ..
+     %fill the x's x1, x2, x3 ..
     for i=1:num_of_unknowns,
         colheadings{end+1} = strcat('x',int2str(i));
     end
@@ -24,7 +40,7 @@ function [solution, iterations, data] = gauss_siedel(coeff_matrix, constants_mat
         colheadings{end+1} = strcat('Err_x',int2str(i));
     end
     
-    % fill the rowheadings
+    %fill the rowheadings
     rowheadings = {};
     for i=1:iterations,
         rowheadings{end+1} = int2str(i);
@@ -50,33 +66,35 @@ end
 function [solution, iterations, data] = implementation(system_matrix, previous_solutions, num_of_unknowns, max_iterations, epsilon, iterations, data)
         
     current_solutions=previous_solutions;
-
+    
+    %disp(previous_solutions);
+    
+    tmp_data=[];
     approximations = [];
     errors = [0, 0, 0];
     for row=1:num_of_unknowns
-        
-        % disp(system_matrix);
+
         
         a=system_matrix(row, row);
         d=system_matrix(row, num_of_unknowns+1);
         %disp(d);
         
         summation=0;
-        index=1;
+        %index=1;
         for col=1:num_of_unknowns
             %disp(index);
             if(row==col)
-                index = index+1;
+                %index = index+1;
                 continue;
             end
             %disp(col);
-            % disp(system_matrix(row, col));
+            %disp(system_matrix(row, col));
             
-            summation = summation + system_matrix(row, col)*previous_solutions(index);
-            index = index+1;
+            summation = summation + system_matrix(row, col)*previous_solutions(col);
+            %index = index+1;
         end
        
-        answer = (1/a)*(d-(summation));
+        answer = (1/a)*(d-summation);
         %disp(answer);
         current_solutions(row)=answer;
 
@@ -95,6 +113,8 @@ function [solution, iterations, data] = implementation(system_matrix, previous_s
     stop_algorithm = stop_condition_test(previous_solutions, current_solutions, max_iterations, iterations, epsilon);
     if(stop_algorithm==true)
         solution = current_solutions;
+        %iterations
+        
         return;
     end
     
@@ -121,10 +141,9 @@ function test = stop_condition_test(previous_solutions, current_solutions, max_i
         end
             
     end
+    
+    test=false;
 
-    
-    
-    
 end
 
 
@@ -138,3 +157,9 @@ function system_matrix = create_system_matrix(coeff_matrix, constants_matrix)
     system_matrix=result;
     
 end
+
+
+
+
+
+

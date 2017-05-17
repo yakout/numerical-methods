@@ -1,6 +1,8 @@
 function [root, iterations, data] = newton_raphson(x0,epsilon, max_iterations, fx)
-    addpath('../');
+    addpath('./utilities');
     tic
+    
+    disp('success');
 
     %obtain function derivative
     syms x;
@@ -10,9 +12,15 @@ function [root, iterations, data] = newton_raphson(x0,epsilon, max_iterations, f
     [root, iterations, data] = implementation(x0, epsilon, max_iterations, fx, fxp, 0, []);
     timeElapsed = toc;
     
+    
+    disp('root : ');
+    disp(root);
+    
 
     % display results in table in output file
-    output_file = strcat('./outputs/newton_raphson_', datestr(clock),'.txt');
+    date_ = strrep(datestr(clock),':','_');
+    output_file = strcat('./root_finding/outputs/newton_raphson_', date_,'.txt');
+    
     fileID = fopen(output_file,'w');
     colheadings = {'Approximate root', 'Precision'};
     rowheadings = {};

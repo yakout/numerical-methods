@@ -1,5 +1,5 @@
 function varargout = MatlabAssignment(varargin)
-addpath('./logic');
+%addpath('./logic');
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -32,6 +32,8 @@ function popupmenu1_Callback(hObject, eventdata, handles)
 contents = cellstr(get(hObject,'String'));
 popChoice = contents{get(hObject, 'Value')};
 if (strcmp(popChoice, 'Bisection'))
+    set(handles.uipanel3,'Visible','on');
+    set(handles.uipanel4,'Visible','on');
     set(handles.low,'String','low');
     set(handles.up,'String','up');
     set(handles.l,'Visible','on');
@@ -40,6 +42,8 @@ if (strcmp(popChoice, 'Bisection'))
     set(handles.up,'Visible','on');
     set(handles.next,'Visible','on');
 elseif (strcmp(popChoice, 'False-position'))
+    set(handles.uipanel3,'Visible','on');
+    set(handles.uipanel4,'Visible','on');
     set(handles.low,'String','low');
     set(handles.up,'String','up');
     set(handles.l,'Visible','on');
@@ -48,6 +52,8 @@ elseif (strcmp(popChoice, 'False-position'))
     set(handles.up,'Visible','on');
     set(handles.next,'Visible','off');
 elseif (strcmp(popChoice, 'Fixed point'))
+    set(handles.uipanel3,'Visible','on');
+    set(handles.uipanel4,'Visible','on');
     set(handles.low,'String','point');
     set(handles.l,'Visible','on');
     set(handles.low,'Visible','on');
@@ -55,6 +61,8 @@ elseif (strcmp(popChoice, 'Fixed point'))
     set(handles.up,'Visible','off');
     set(handles.next,'Visible','off');
 elseif (strcmp(popChoice, 'Newton-Raphson'))
+    set(handles.uipanel3,'Visible','on');
+    set(handles.uipanel4,'Visible','on');
     set(handles.low,'String','point');
     set(handles.l,'Visible','on');
     set(handles.low,'Visible','on');
@@ -62,6 +70,8 @@ elseif (strcmp(popChoice, 'Newton-Raphson'))
     set(handles.up,'Visible','off');
     set(handles.next,'Visible','off');
 elseif (strcmp(popChoice, 'Secant'))
+    set(handles.uipanel3,'Visible','on');
+    set(handles.uipanel4,'Visible','on');
     set(handles.low,'String','point 1');
     set(handles.up,'String','point 2');
     set(handles.l,'Visible','on');
@@ -70,11 +80,29 @@ elseif (strcmp(popChoice, 'Secant'))
     set(handles.up,'Visible','on');
     set(handles.next,'Visible','off');
 elseif (strcmp(popChoice, 'Bierge-Vieta'))
+    set(handles.uipanel3,'Visible','on');
+    set(handles.uipanel4,'Visible','on');
     set(handles.low,'String','point');
     set(handles.l,'Visible','on');
     set(handles.low,'Visible','on');
     set(handles.u,'Visible','off');
     set(handles.up,'Visible','off');
+    set(handles.next,'Visible','off');
+elseif (strcmp(popChoice, 'General-Method'))
+    set(handles.low,'String','point');
+
+    set(handles.u,'Visible','off');
+    set(handles.uipanel3,'Visible','off');
+    set(handles.uipanel4,'Visible','off');
+elseif (strcmp(popChoice, 'All methods'))
+    set(handles.uipanel3,'Visible','on');
+    set(handles.uipanel4,'Visible','on');
+    set(handles.low,'String','low');
+    set(handles.up,'String','up');
+    set(handles.l,'Visible','on');
+    set(handles.low,'Visible','on');
+    set(handles.u,'Visible','on');
+    set(handles.up,'Visible','on');
     set(handles.next,'Visible','off');
 end
  
@@ -96,10 +124,13 @@ end
 
 
 function solve_Callback(hObject, eventdata, handles)
-popChoice =get(hObject, 'Value');
+popChoice = get(handles.popupmenu1, 'Value');
+
 equation = get(handles.edit1, 'string');
 f = (['@(x)' equation]);
 f= str2func(f);
+
+disp(f);
 %sym x;
 %f = eval(equation);
 %f = matlabFunction(f)
@@ -116,18 +147,20 @@ if isnan(ep)
     ep = 0.00001
 end
 
+disp(popChoice)
+
 if popChoice == 1
     l = get(handles.l, 'string');
     u = get(handles.u, 'string');
     l = str2double(l);
     u = str2double(u);
-    [root, iterations, data]=bisection(l,u,ep,n,f);
+   [root, iterations, data]=bisection(l,u,ep,n,f);
 elseif popChoice == 2
     l = get(handles.l, 'string');
     u = get(handles.u, 'string');
     l = str2double(l);
     u = str2double(u);
-    [root, iterations, data]=false_point(l,u,ep,n,f);
+    [root, iterations, data]=false_position(l,u,ep,n,f);
 elseif popChoice == 3
     i = get(handles.l, 'string');
     i = str2double(i);
@@ -141,11 +174,36 @@ elseif popChoice == 5
     i2 = get(handles.u, 'string');
     i1 = str2double(i1);
     i2 = str2double(i2);
-    [root, iterations, data]=Vsecant(i1,i2,ep,n,f);
+    [root, iterations, data]=secant(i1,i2,ep,n,f);
 elseif popChoice == 6
     i = get(handles.l, 'string');
     i = str2double(i);
-    birge_vieta(f,i,ep,n);
+    [roots, iterations, data]=birge_vieta(f,i,ep,n,1);
+    data=roots;
+    %birge_vieta(f,i,ep,n);
+elseif popChoice == 7
+    [roots, iterations, data] = general_method(f);
+    data=roots;
+elseif popChoice == 8
+    l = get(handles.l, 'string');
+    u = get(handles.u, 'string');
+    l = str2double(l);
+    u = str2double(u);
+    [r1, iter1, d1] =bisection(l,u,ep,n,f);
+    [r2, iter2, d2]=false_position(l,u,ep,n,f);
+    [r3, iter3, d3]=newton_raphson(l,ep,n,f);
+    [r4, iter4, d4]=secant(l,u,ep,n,f);
+    %[r5, iterations, data]=fixed_point(i,ep,n,f);
+    %[r6, iterations, data]=birge_vieta(f,i,ep,n,1);
+    %d11=d1(: );
+    disp('*******************************')
+    %d11=d1(iter1,4);
+    result = [r1,iter1,d1(iter1,4)];
+    result = [result; r2, iter2, d2(iter2,4)];
+    result = [result; r3, iter3, d3(iter3,2)];
+    result = [result; r4, iter4, d4(iter4,2)];
+    
+    data=result;
 end
 set(handles.tableContent,'Data',data);
 
@@ -162,6 +220,7 @@ end
 
 
 function plot_Callback(hObject, eventdata, handles)
+popChoice = get(handles.popupmenu1, 'Value');
 axes(handles.axes1);
 pan on
 equation = get(handles.edit1, 'string');
@@ -169,7 +228,15 @@ f = str2func(['@(x)' equation]);
 disp(f);
 syms x
 hold off
-ezplot(f);
+
+if popChoice==4 || popChoice==5 || popChoice==6
+    syms x;
+    z = diff(f(x));
+    fxp = inline(char(z));
+    ezplot(fxp);
+else
+    ezplot(f);
+end
 hold on
 l = get(handles.l, 'string');
 l = str2double(l);
@@ -178,8 +245,10 @@ u = str2double(u);
 y=get(gca,'ylim')
 x1=[l,l];
 plot(x1,y,'g')
+if popChoice==1 || popChoice==2 || popChoice==5 || popChoice==7
 x2=[u,u];
 plot(x2,y,'r')
+end
 
 %f=figure;
 %fplot(@(x) cos(x),[0 3],'b')
@@ -266,6 +335,7 @@ function next_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
+
 function l_CreateFcn(hObject, eventdata, handles)
 
 function u_CreateFcn(hObject, eventdata, handles)
@@ -282,24 +352,126 @@ function compare_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 %fplot(@(x) cos(x),[0 3],'b')
 %hold off
-%f=figure;
+f=figure;
 hold off
-set(handles.next,'Visible','off');
-x1=[1,2,4,5,6,3,8,9];
-y1=[10,2,3,4,5,9,8,9];
-plot(x1,y1,'g')
-hold on
-scatter(x1,y1,'k','x')
-x2=[18,16,15,14,10,8,9,5];
-y2=[12,11,11,11,10,9,8,5];
-plot(x2,y2,'b')
-scatter(x2,y2,'k','x');
-%grid on
-%x=[0:0.1:10];
-%x1=5;
-%x=[5,5];
-%y=[0,5];
-%plot(x,y)
-%plot([x1,x1]);
-%hold on
+%EVALUATE NUMBER OF ITERATIONS
+n = get(handles.numOfIter,'string');
+n = str2double(n);
+if isnan(n)
+    n = 50;
+end
 
+%GET EPSILON
+ep = get(handles.RError,'string');
+ep = str2double(ep);
+if isnan(ep)
+    ep = 0.00001;
+end
+
+%GET LIMITS
+l = get(handles.l, 'string');
+u = get(handles.u, 'string');
+l = str2double(l);
+u = str2double(u);
+
+%GET FUNCTION
+equation = get(handles.edit1, 'string');
+f = (['@(x)' equation]);
+f= str2func(f);
+disp(f)
+
+%************************************************
+%PLOT FOR BISECTION
+[w, iterations, data] =bisection(l,u,ep,n,f);
+y2=data(:,4);
+x2=1:iterations;
+plot(x2,y2,'y');
+hold on
+scatter(x2,y2,'k','x');
+
+%PLOT FOR FALSE_POSITION
+[w, iterations, data] =false_position(l,u,ep,n,f);
+y2=data(:,4);
+x2=1:iterations;
+plot(x2,y2,'r');
+scatter(x2,y2,'k','x');
+
+%PLOT FOR NEWTON
+[w, iterations, data] =newton_raphson(l,ep, n, f);
+y2=data(:,2);
+x2=1:iterations;
+plot(x2,y2,'b');
+scatter(x2,y2,'k','x');
+
+%PLOT FOR SECANT
+[w, iterations, data] =secant(l,u,ep,n,f);
+y2=data(:,2);
+x2=1:iterations;
+plot(x2,y2,'m');
+scatter(x2,y2,'k','x');
+
+legend('show');
+legend('bisection', '', 'false-position', '', 'newton-raphson', '', 'secant');
+
+%ITERATION-APPROX PLOT
+%***********************************
+f=figure;
+hold off
+%EVALUATE NUMBER OF ITERATIONS
+n = get(handles.numOfIter,'string');
+n = str2double(n);
+if isnan(n)
+    n = 50;
+end
+
+%GET EPSILON
+ep = get(handles.RError,'string');
+ep = str2double(ep);
+if isnan(ep)
+    ep = 0.00001;
+end
+
+%GET LIMITS
+l = get(handles.l, 'string');
+u = get(handles.u, 'string');
+l = str2double(l);
+u = str2double(u);
+
+%GET FUNCTION
+equation = get(handles.edit1, 'string');
+f = (['@(x)' equation]);
+f= str2func(f);
+disp(f)
+
+%************************************************
+%PLOT FOR BISECTION
+[w, iterations, data] =bisection(l,u,ep,n,f);
+y2=data(:,3);
+x2=1:iterations;
+plot(x2,y2,'y');
+hold on
+scatter(x2,y2,'k','x');
+
+%PLOT FOR FALSE_POSITION
+[w, iterations, data] =false_position(l,u,ep,n,f);
+y2=data(:,3);
+x2=1:iterations;
+plot(x2,y2,'r');
+scatter(x2,y2,'k','x');
+
+%PLOT FOR NEWTON
+[w, iterations, data] =newton_raphson(l,ep, n, f);
+y2=data(:,1);
+x2=1:iterations;
+plot(x2,y2,'b');
+scatter(x2,y2,'k','x');
+
+%PLOT FOR SECANT
+[w, iterations, data] =secant(l,u,ep,n,f);
+y2=data(:,1);
+x2=1:iterations;
+plot(x2,y2,'m');
+scatter(x2,y2,'k','x');
+
+legend('show');
+legend('bisection', '', 'false-position', '', 'newton-raphson', '', 'secant');

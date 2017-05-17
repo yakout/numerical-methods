@@ -1,22 +1,40 @@
-function [roots, iterations, data] = birge_vieta(fx, x0, epsilon, max_iterations)
+function [roots, iterations, data] = birge_vieta(fx, x0, epsilon, max_iterations,mode)
     % data [approx error]
 
+    %symbolic_function=poly2sym(fx_coeff)
+    
+    %disp(fx);
+    
+    %disp(fx(100))
+    
     g=sym(fx);
     fx_coeff = sym2poly(g); 
+    
+    %disp(fx_coeff);
+    
     %result= zeros(length(fx_coeff)-1, 'int8');
-    result=[0,1];
+    result=[];
     current_eqn=fx_coeff;
+    index=1;
     
     for root=1:length(fx_coeff)-1
-        %disp(current_eqn);
-        %disp(current_eqn);
+        
         [current_root, next_eq] = newton_horner(current_eqn, x0, epsilon, max_iterations);
-        %fprintf('%d\n', current_root);
-        result(root)=current_root;
+
+        if(abs(fx(current_root))>0.01)
+            continue;
+        end
+        
+        
+        result(index)=current_root;
+        index=index+1;
         current_eqn=next_eq;
     end
     
+    disp(result);
     roots = result;
+    iterations=[];
+    data=[];
 
 end
 
@@ -43,9 +61,10 @@ function [root, new_coeffs] = newton_horner(fx_coeff, x0, epsilon, max_iteration
         fx_value=horner_table(length(fx_coeff), 3);
         fxp_value=horner_table(length(fx_coeff)-1, 4);
         xii = xi - fx_value/fxp_value;
+        err=abs(xii-xi)/abs(xii);
         %03_stopping condition
         iterations = iterations+1;
-        if(iterations>max_iterations)%%||(abs(horner_table(length(fx_coeff), 3))<=epsilon)
+        if(iterations>max_iterations)||(err<epsilon)
             root = xii;
             %disp(root);
             new_coeffs=obtain_new_coefficients(horner_table, length(fx_coeff));

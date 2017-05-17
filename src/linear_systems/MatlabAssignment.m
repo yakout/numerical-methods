@@ -1,5 +1,4 @@
 function varargout = MatlabAssignment(varargin)
-addpath('./logic');
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
@@ -67,6 +66,7 @@ finalres={};
 eqn={};
 labels=get(handles.edit9, 'string');
 eval(['syms ' labels]);
+num=numel(data);
 for i=1:numel(data)
       disp(data(i));
     finalres=[finalres;char(data(i))];  
@@ -114,13 +114,32 @@ set(handles.uitable6,'Visible','on')
     elseif (popChoice==4)
         init=str2double(strsplit(get(handles.edit12,'string'),' '));
         maxIter=str2double(get(handles.edit11,'string'));
+        if isnan(maxIter)
+           maxIter= 50;
+        end
         epsilon=str2double(get(handles.edit10,'string'));
-        w=gauss_siedel(A,B,init,maxIter,epsilon);
-    w = strread(num2str(w),'%s');
-    d=cat(2,d,w);
-    set(handles.uitable6,'Data',d);
-    set(handles.uitable6,'Visible','on')
-
+         if isnan(epsilon)
+           epsilon= 0.0001;
+         end
+       
+        [w, iterations, data] =gauss_siedel(A,B,init,maxIter,epsilon);
+        w = strread(num2str(w),'%s');
+        d=cat(2,d,w);
+        set(handles.uitable5,'Data',data);
+        set(handles.uitable6,'Data',d);
+        set(handles.uitable6,'Visible','on');
+        set(handles.uitable5,'Visible','on');
+        x2=1:iterations;
+          hold off
+        for i=1:num
+            y2=data(:,i);
+            disp('************************');
+            disp(y2);
+            
+            plot(x2,y2,'m');
+            hold on
+            scatter(x2,y2,'k','x');
+        end
     end
 
 %set(handles.show,'String',char(m)); 
@@ -163,29 +182,37 @@ function loadBtn_Callback(hObject, eventdata, handles)
 fullPath = strcat(pathname,filename);
 fileID = fopen(fullPath);
 tline = fgetl(fileID);
-num=str2double(tline)
-labels = fgetl(fileID)
+num=str2double(tline);
+labels = fgetl(fileID);
 tline = fgetl(fileID);
 finalres={};
 eqn={};
-while ischar(tline)
+for i=1:num
       disp(tline);
     finalres=[finalres;tline];  
     tline = fgetl(fileID);
     
 end
+
+disp(finalres);
+set(handles.tableContent,'Data',finalres)
 eval(['syms ' labels]);
 
   
 fclose(fileID);
 
 for  c = 1:num
-eqn = [eqn,eval(strrep(char(finalres(c)),'=','=='))]
+eqn = [eqn,eval(strrep(char(finalres(c)),'=','=='))];
 end
-[A,B] = equationsToMatrix(eqn)
 
-ss=sprintf('%s\n%s',char(B),char(A));
-set(handles.show,'String',ss);
+%[A,B] = equationsToMatrix(eqn);
+set(handles.edit1,'String',num);
+set(handles.edit9,'String',labels);
+Ncolumns=1;
+Nrows=num;
+
+set(handles.tableContent,'Visible','on')
+set(handles.tableContent,'columnname','Equations')
 
 
 
@@ -324,3 +351,9 @@ function edit12_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes during object creation, after setting all properties.
+function axes1_CreateFcn(hObject, eventdata, handles)
+pan on
+% Hint: place code in OpeningFcn to populate axes1
